@@ -1,4 +1,5 @@
 import os
+import torch
 from ollama import embed
 from nltk.tokenize import sent_tokenize
 from database_connect_embeddings import get_psql_session, TextEmbedding
@@ -18,8 +19,8 @@ def populate_vector_database(folder_path='all_articles'):
     print(f"Using device: {device}")
 
     session = get_psql_session()
-    model = SentenceTransformer("deepseek-r1:14b", device=device) #https://huggingface.co/Qwen/Qwen3-Embedding-0.6B #https://huggingface.co/Salesforce/SFR-Embedding-Mistral
-
+    #model = SentenceTransformer("deepseek-r1:14b", device=device) #https://huggingface.co/Qwen/Qwen3-Embedding-0.6B #https://huggingface.co/Salesforce/SFR-Embedding-Mistral
+    model = SentenceTransformer("BAAI/bge-small-en-v1.5", device=device)    
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
 
