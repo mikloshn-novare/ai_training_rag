@@ -5,6 +5,11 @@ from nltk.tokenize import sent_tokenize
 from database_connect_embeddings import get_psql_session, TextEmbedding
 from sentence_transformers import SentenceTransformer
 
+import nltk
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+
 # import nltk
 # nltk.download("punkt")
 # nltk.download("punkt_tab")
@@ -32,12 +37,16 @@ def populate_vector_database(folder_path='all_articles'):
             
             sentences = sent_tokenize(content)
             # embeddings = embed(model="deepseek-coder:6.7b", input=sentences)["embeddings"]
-            embeddings = model.encode(sentences)
-            
+            embeddings = embed(model="mxbai-embed-large", input=sentences)['embeddings']
+            # embeddings = model.encode(sentences)
+            # embeddings = model.encode(sentences, normalize_embeddings=True)
+
             for i, (embedding, content) in enumerate(zip(embeddings, sentences)):
-                new_embedding = TextEmbedding(embedding=embedding, content=content, file_name=filename, sentence_number=i+1)
+                embedding_list = embedding.tolist()
+                new_embedding = TextEmbedding(embedding=embedding_list, content=content, file_name=filename, sentence_number=i+1)
                 session.add(new_embedding)
             session.commit()
+            session.close()
 
             print("Succesfully generated embeddings for: {}".format(file_path))
 
