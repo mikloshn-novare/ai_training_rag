@@ -2,7 +2,7 @@ import os
 from ollama import embed
 from nltk.tokenize import sent_tokenize
 from database_connect_embeddings import get_psql_session, TextEmbedding
-# from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer
 
 # import nltk
 # nltk.download("punkt")
@@ -15,7 +15,7 @@ def populate_vector_database(folder_path='all_articles'):
         os.makedirs(folder_path)
 
     session = get_psql_session()
-    # model = SentenceTransformer("/models/Qwen3-Embedding-0.6B", device="cpu") #https://huggingface.co/Qwen/Qwen3-Embedding-0.6B #https://huggingface.co/Salesforce/SFR-Embedding-Mistral
+    model = SentenceTransformer("/models/deepseek-r1:14b", device="gpu") #https://huggingface.co/Qwen/Qwen3-Embedding-0.6B #https://huggingface.co/Salesforce/SFR-Embedding-Mistral
 
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
@@ -27,8 +27,8 @@ def populate_vector_database(folder_path='all_articles'):
                 content = f.read()
             
             sentences = sent_tokenize(content)
-            embeddings = embed(model="deepseek-coder:6.7b", input=sentences)["embeddings"]
-            # embeddings = model.encode(sentences)
+            # embeddings = embed(model="deepseek-coder:6.7b", input=sentences)["embeddings"]
+            embeddings = model.encode(sentences)
             
             for i, (embedding, content) in enumerate(zip(embeddings, sentences)):
                 new_embedding = TextEmbedding(embedding=embedding, content=content, file_name=filename, sentence_number=i+1)
