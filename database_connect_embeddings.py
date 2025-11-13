@@ -6,7 +6,7 @@ Base = declarative_base()
 
 # Connect to PostgreSQL                                                                                                                                                                                                                     
 def get_psql_session():
-    engine = create_engine('postgresql://postgres@10.1.1.120/text_embeddings')
+    engine = create_engine('postgresql://postgres@10.1.1.120/text_embeddings', client_encoding='utf8')
     Base.metadata.create_all(engine)
 
     # Create a session                                                                                                                                                                                                                      
