@@ -118,7 +118,8 @@ def get_surrounding_sentences(entry_ids, file_names, group_window_size, session)
 def search_by_query(query, num_matches=5, group_window_size=5):
 
     session = get_psql_session()
-    model = SentenceTransformer('SFR-Embedding-Mistral', device='cpu')
+    #model = SentenceTransformer('SFR-Embedding-Mistral', device='cpu')
+    model = SentenceTransformer("BAAI/bge-small-en-v1.5",  device='cuda')
     query_embedding = model.encode(query)
     del model
     gc.collect()
